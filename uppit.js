@@ -1,9 +1,57 @@
-(function () {
-    var uppit = document.getElementById('uppit');
+function ajaxUploader(file) {
+    
+    var handleOnload,
+        xhr,
+        fd;
+
+    fd = new FormData();
+    xhr = new XMLHttpRequest();
+
+    handleOnload = function (that) {
+        return function (event) {
+            console.log('upload done');
+            // console.log(xhr.responseText);
+        }
+    }(this)
+
+    xhr.addEventListener('load', handleOnload);
+    xhr.addEventListener('progress', function() {console.log('progress')}, true);
+
+    xhr.open(
+        'POST', 
+        'upload.php', 
+        true
+    );
+
+    fd.append('file', file);
+    xhr.send(fd);
+}
+
+function dragAndDrop (element) {
+    this.handleDragEnter = function (that) {
+        return function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }(this)
+    
+    this.handleDragExit = function (that) {
+        return function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }(this)
     
     this.handleWithNoop = function (event) {
         event.preventDefault();
         event.stopPropagation();
+    }
+    
+    this.triggerDrop = function (file) {
+        var event = document.createEvent('Event');
+        event.initEvent('filedrop', true, true);
+        event.file = file;
+        element.dispatchEvent(event);
     }
     
     this.handleDrop = function (that) {
@@ -16,64 +64,54 @@
                 index;
 
             dataTransfer = event.dataTransfer;
+            
             files = dataTransfer.files;
 
             for (index = 0; index < files.length; index++) {
-                that.ajaxUpload(files[index])
+                that.triggerDrop(files[index]);
             }
         }
     }(this)
     
-    this.ajaxUpload = function (file) {
-        var handleOnload,
-            xhr,
-            fd;
-        
-        fd = new FormData();
-        xhr = new XMLHttpRequest();
-        
-        handleOnload = function (xhr) {
-            return function (event) {
-                console.log(xhr.responseText);
-            }
-        }(xhr)
-        
-        xhr.addEventListener('load', handleOnload);
-        xhr.addEventListener('progress', function() {console.log('progress')});
-        
-        xhr.open(
-            'POST', 
-            'upload.php', 
-            true
-        );
-          
-        fd.append('file', file);
-        xhr.send(fd);
+    element.addEventListener('dragenter', this.handleDragEnter);
+    element.addEventListener('dragover', this.handleWithNoop);
+    element.addEventListener('dragexit', this.handleDragExit);
+    element.addEventListener('drop', this.handleDrop);
+}
+
+(function (dnd, upl) {
+    var uppit = document.getElementById('uppit');
+    
+    this.setActive = function () {
+        uppit.setAttribute('class', 'active');
+        uppit.innerHTML = 'Drop it!';
     }
     
-    this.upload = function (file) {
-        var reader;
-        
-        if (!(file instanceof File)) {
-            throw new Error('Passed argument is not instance of File');
-        }
-        
-        reader = new FileReader();
-        
-        reader.addEventListener('progress', function (event) {console.log(event);}, false);
-        
-        reader.readAsBinaryString(file);
-        
-        reader.onload = function (that) {
-            return function (event) {
-                that.ajaxUpload(event.target.result, file);
-            }
-        }(this)
+    this.setInactive = function () {
+        uppit.setAttribute('class', '');
+        uppit.innerHTML = 'Drop files here';
     }
-   
-    uppit.addEventListener('dragenter', this.handleWithNoop);
-    uppit.addEventListener('dragover', this.handleWithNoop);
-    uppit.addEventListener('dragexit', this.handleWithNoop);
+    this.startUpload = function () {
+        return function event (event) {
+            upl(event.file);
+        }
+    }()
+    
+    this.handleEnter = function (that) {
+       return function (event) {
+           that.setActive();
+       } 
+    }(this)
+    
+    this.handleDrop = function (that) {
+       return function (event) {
+           that.setInactive();
+       } 
+    }(this)
+    
+    uppit.addEventListener('filedrop', startUpload);
+    uppit.addEventListener('dragenter', this.handleEnter);
     uppit.addEventListener('drop', this.handleDrop);
-
-})();
+    
+    dnd(uppit);
+})(dragAndDrop, ajaxUploader);
