@@ -6,3 +6,7 @@
     color: #ececec;
     text-align: center;
 }
+#uppit.active {
+    border-color: orangered;
+    color: orangered;
+}
