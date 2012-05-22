@@ -1,6 +1,7 @@
-(function (uppit) {
+(function (uppit, document) {
+    "use strict";
     if (!uppit instanceof Object) {
-        throw new Error ('Uppit object not found for ajaxUploader plugin');
+        throw new Error('Uppit object not found for ajaxUploader plugin');
     }
 
     uppit.plugins.preview = (function () {
@@ -11,16 +12,16 @@
             fileNodes = [];
 
         handleLoad = function (data, file) {
-            
+
         };
-        
+
 
         createPreview = function (file) {
-            var fileNode = document.createElement('div')
+            var fileNode = document.createElement('div');
             fileNode.innerHTML = file.name;
             element.appendChild(fileNode);
             fileNodes.push(fileNode);
-            
+
             var fileReader = new FileReader();
 
             fileReader.onload = (function (file) {
@@ -38,17 +39,19 @@
                 createPreview(event.file);
             };
         }());
-        
+
         setPreviewHref = function (message, file) {
-            for(var i = 0; i < fileNodes.length; i++) {
-                var fileNode = fileNodes[i];
+            var i,
+                fileNode;
+            for (i = 0; i < fileNodes.length; i += 1) {
+                fileNode = fileNodes[i];
 
                 if (fileNode.innerHTML === file.name) {
                     fileNode.innerHTML += message;
                 }
             }
         };
-        
+
         handleUploadDone = (function () {
             return function (event) {
                 event.stopPropagation();
@@ -61,4 +64,4 @@
 
         return {};
     }());
-}(uppit));
+}(uppit, window.document));

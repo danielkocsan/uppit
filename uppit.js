@@ -7,7 +7,6 @@ var uppit = function () {
         event.initEvent('elementSet', true, true);
         event.element = elmnt;
         document.dispatchEvent(event);
-        console.log('elementSet has been triggered');
         element = elmnt;
     }
     

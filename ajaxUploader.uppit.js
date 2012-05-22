@@ -1,6 +1,7 @@
 (function (uppit) {
+    "use strict";
     if (!uppit instanceof Object) {
-        throw new Error ('Uppit object not found for ajaxUploader plugin');
+        throw new Error('Uppit object not found for ajaxUploader plugin');
     }
 
     uppit.plugins.ajaxUploader = (function () {
@@ -8,7 +9,7 @@
         var upload,
             handleFileDrop,
             element = uppit.getElement();
-        
+
         upload = function (file) {
             var handleOnload,
                 xhr,
@@ -23,13 +24,13 @@
                 event.file = file;
                 event.xhr = xhr;
                 element.dispatchEvent(event);
-            }
+            };
 
-            handleOnload = function () {
+            handleOnload = (function () {
                 return function (event) {
                     triggerDone(file);
                 };
-            }();
+            }());
 
             xhr.addEventListener('load', handleOnload);
             xhr.addEventListener('progress', function() {console.log('progress')}, true);
@@ -43,16 +44,16 @@
             fd.append('file', file);
             xhr.send(fd);
         };
-        
-        handleFileDrop = function () {
+
+        handleFileDrop = (function () {
             return function (event) {
                 event.stopPropagation();
                 upload(event.file);
-            }
-        }();
-        
+            };
+        }());
+
         element.addEventListener('filedrop', handleFileDrop);
-        
+
         return {};
-    })();
+    }());
 })(uppit);
