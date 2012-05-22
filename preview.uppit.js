@@ -9,7 +9,12 @@
             handleFileDrop,
             handleLoad,
             element = uppit.getElement(),
-            fileNodes = [];
+            fileNodes = [],
+            setPreviewHref,
+            handleUploadDone,
+            init,
+            handleElementSet,
+            filesNode;
 
         handleLoad = function (data, file) {
 
@@ -17,12 +22,13 @@
 
 
         createPreview = function (file) {
-            var fileNode = document.createElement('div');
-            fileNode.innerHTML = file.name;
-            element.appendChild(fileNode);
-            fileNodes.push(fileNode);
+            var fileNode = document.createElement('div'),
+                fileReader = new FileReader();
 
-            var fileReader = new FileReader();
+            fileNode.innerHTML = file.name;
+            fileNode.setAttribute('class', 'file');
+            filesNode.appendChild(fileNode);
+            fileNodes.push(fileNode);
 
             fileReader.onload = (function (file) {
                 return function (event) {
@@ -59,8 +65,19 @@
             };
         }());
 
-        element.addEventListener('filedrop', handleFileDrop);
-        element.addEventListener('upload.done', handleUploadDone);
+        init = function () {
+            element.addEventListener('filedrop', handleFileDrop);
+        };
+
+        handleElementSet = (function () {
+            return function (event) {
+                element = event.elements.element;
+                filesNode = event.elements.files;
+                init();
+            };
+        }());
+
+        document.addEventListener('elementSet', handleElementSet);
 
         return {};
     }());

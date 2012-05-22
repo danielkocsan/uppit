@@ -1,5 +1,5 @@
 #uppit {
-    height: 100px;
+    min-height: 100px;
     border: 1px dashed #ececec;
     line-height: 100px;
     font-size: 32px;
@@ -10,4 +10,21 @@
 #uppit.active {
     border-color: orangered;
     color: orangered;
+}
+
+#uppit>#files>.file {
+    width: 5em;
+    height: 7em;
+    float: left;
+    border: .05em solid rgba(100,100,100, .1);
+    border-radius: .1em;
+    box-shadow: .01em .01em .2em rgba(100,100,100, .3);
+    margin: .2em;
+    font-size: 0.5em;
+    line-height: 1em;
+    word-break: break-all;
+}
+
+#uppit .clear {
+    clear: both;
 }

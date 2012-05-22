@@ -10,7 +10,8 @@
             handleWithNoop,
             triggerDrop,
             handleDrop,
-            element;
+            element,
+            handleElementSet;
 
         handleDragEnter = (function () {
             return function (event) {
@@ -66,7 +67,7 @@
 
         handleElementSet = (function () {
             return function (event) {
-                element = event.element;
+                element = event.elements.element;
                 init();
             };
         }());
