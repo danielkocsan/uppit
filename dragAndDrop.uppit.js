@@ -9,22 +9,22 @@
             handleWithNoop,
             triggerDrop,
             handleDrop,
-            element = uppit.getElement();
+            element;
         
-        handleDragEnter = function (that) {
+        handleDragEnter = (function () {
             return function (event) {
                 event.preventDefault();
                 event.stopPropagation();
                 console.log('dnd-enter');
             }
-        }(this)
+        })();
 
-        handleDragExit = function (that) {
+        handleDragExit = (function () {
             return function (event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
-        }(this)
+        })();
 
         handleWithNoop = function (event) {
             event.preventDefault();
@@ -38,7 +38,7 @@
             element.dispatchEvent(event);
         }
 
-        handleDrop = function () {
+        handleDrop = (function () {
             return function (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -55,13 +55,24 @@
                     triggerDrop(files[index]);
                 }
             }
-        }()
+        })();
 
-        element.addEventListener('dragenter', handleDragEnter);
-        element.addEventListener('dragover', handleWithNoop);
-        element.addEventListener('dragexit', handleDragExit);
-        element.addEventListener('drop', handleDrop);
+        function init () {
+            element.addEventListener('dragenter', handleDragEnter);
+            element.addEventListener('dragover', handleWithNoop);
+            element.addEventListener('dragexit', handleDragExit);
+            element.addEventListener('drop', handleDrop);
+        }
         
+        handleElementSet = (function () {
+            return function (event) {
+                console.log('elementSet event catched');
+                element = event.element;
+                init();
+            }
+        }());
+        
+        document.addEventListener('elementSet', handleElementSet);
         return {};
     })();
 })(uppit);
